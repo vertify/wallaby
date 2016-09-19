@@ -47,6 +47,7 @@ defmodule Wallaby.DSL.Actions do
 
   alias Wallaby.Node
   alias Wallaby.Drivable
+  alias Wallaby.Driver
 
   @type parent :: Wallaby.Node.Query.parent
   @type locator :: Wallaby.Node.Query.locator
@@ -67,6 +68,20 @@ defmodule Wallaby.DSL.Actions do
   end
   def fill_in(parent, locator, [{:with, value} | _]=opts) when is_number(value) do
     fill_in(parent, locator,  Keyword.merge(opts, [with: to_string(value)]))
+  end
+
+  def fill_in(parent, with: value) when is_binary(value) do
+    parent
+    |> Node.fill_in(with: value)
+
+    parent
+  end
+
+  def fill_in(parent, with: value) when is_number(value) do
+    parent
+    |> Node.fill_in(with: to_string(value))
+
+    parent
   end
 
   @doc """
@@ -95,6 +110,13 @@ defmodule Wallaby.DSL.Actions do
     parent
   end
 
+  def check(parent) do
+    parent
+    |> Node.check
+
+    parent
+  end
+
   @doc """
   Unchecks a checkbox based on id, label text, or name.
   """
@@ -104,6 +126,12 @@ defmodule Wallaby.DSL.Actions do
     parent
     |> Node.Query.checkbox(locator, opts)
     |> Node.uncheck
+
+    parent
+  end
+
+  def uncheck(parent) do
+    Node.uncheck(parent)
 
     parent
   end
@@ -134,7 +162,7 @@ defmodule Wallaby.DSL.Actions do
     |> Node.click
 
     parent
-    |> Drivable.root
+    |> Drivable.page
   end
 
   @doc """
@@ -164,11 +192,20 @@ defmodule Wallaby.DSL.Actions do
   # The node can also be passed in directly.
   # """
   # @spec clear(Session.t, query) :: Session.t
-  # def clear(session, query) when is_binary(query) do
-  #   session
-  #   |> find({:fillable_field, query})
-  #   |> clear()
-  # end
+  def clear(parent, locator, opts\\[]) do
+    parent
+    |> Node.Query.fillable_field(locator, opts)
+    |> Node.clear()
+
+    parent
+  end
+
+  def clear(parent) do
+    parent
+    |> Node.clear()
+
+    parent
+  end
 
   @doc """
   Attaches a file to a file input. Input nodes are looked up by id, label text,
@@ -184,5 +221,20 @@ defmodule Wallaby.DSL.Actions do
     |> Node.set(path)
 
     parent
+  end
+
+  def send_keys(session, keys) when is_list(keys) do
+    Driver.send_keys(session, keys)
+    session
+  end
+
+  @doc """
+  Sends text characters to the active element
+  """
+  # @spec send_text(t, String.t) :: t
+
+  def send_text(session, text) do
+    Driver.send_text(session, text)
+    session
   end
 end

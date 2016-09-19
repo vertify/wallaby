@@ -13,7 +13,7 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("Submit button")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -22,7 +22,7 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("button-submit")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -31,7 +31,7 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("button-submit-id")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -106,7 +106,7 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("Submit input")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -115,7 +115,7 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-submit")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -124,7 +124,7 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-submit-id")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -199,7 +199,7 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-image")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -208,7 +208,7 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-image-id")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end

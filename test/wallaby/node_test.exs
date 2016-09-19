@@ -57,16 +57,6 @@ defmodule Wallaby.NodeTest do
     assert elements == []
   end
 
-  test "has_text?/2 waits for presence of text and returns a bool", %{server: server, session: session} do
-    node =
-    session
-      |> visit(server.base_url <> "wait.html")
-      |> find("#container")
-
-    assert has_text?(node, "main")
-    refute has_text?(node, "rain")
-  end
-
   test "assert_text/2 waits for presence of text and and returns true if found", %{server: server, session: session} do
     node =
     session
@@ -189,7 +179,7 @@ defmodule Wallaby.NodeTest do
 
     session
     |> find("#name_field")
-    |> click
+    |> Wallaby.Node.click
 
     session
     |> send_text("hello")

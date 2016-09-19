@@ -17,6 +17,7 @@ defmodule Wallaby do
   use Application
 
   @pool_name Wallaby.ServerPool
+  @default_max_wait_time 3_000
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
@@ -53,6 +54,10 @@ defmodule Wallaby do
 
   def phantomjs_path do
     Application.get_env(:wallaby, :phantomjs, "phantomjs")
+  end
+
+  def max_wait_time do
+    Application.get_env(:wallaby, :max_wait_time, @default_max_wait_time)
   end
 
   defp poolboy_config do

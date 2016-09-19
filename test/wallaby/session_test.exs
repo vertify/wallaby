@@ -19,7 +19,7 @@ defmodule Wallaby.SessionTest do
       session
       |> visit(server.base_url)
       |> click_link("Page 1")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/page_1.html"
   end
@@ -29,7 +29,7 @@ defmodule Wallaby.SessionTest do
       session
       |> visit(server.base_url)
       |> click_link("Page 1")
-      |> get_current_path
+      |> current_path
 
     assert current_path == "/page_1.html"
   end

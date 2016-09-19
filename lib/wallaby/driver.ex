@@ -121,7 +121,7 @@ defmodule Wallaby.Driver do
   """
   def visit(session, path) do
     check_logs! session, fn ->
-      request!(:post, "#{session.url}/url", %{url: path})
+      request!(:post, "#{session.session_url}/url", %{url: path})
       session
     end
   end
@@ -290,7 +290,7 @@ defmodule Wallaby.Driver do
     end
   end
 
-  defp request(method, url, params \\ %{}, opts \\ [])
+  # defp request(method, url, params \\ %{}, opts \\ [])
   defp request(method, url, params, _opts) when map_size(params) == 0 do
     make_request(method, url, "")
   end

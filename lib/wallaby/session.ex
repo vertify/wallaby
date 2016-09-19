@@ -45,49 +45,8 @@ defmodule Wallaby.Session do
   }
 
   alias Wallaby.Driver
-  alias Wallaby.Node
 
   defstruct [:id, :url, :session_url, :server, screenshots: []]
-
-  @doc """
-  Changes the current page to the provided route.
-  Relative paths are appended to the provided base_url.
-  Absolute paths do not use the base_url.
-  """
-  @spec visit(t, String.t) :: t
-
-  def visit(session, path) do
-    uri = URI.parse(path)
-
-    cond do
-      uri.host == nil && String.length(base_url) == 0 ->
-        raise Wallaby.NoBaseUrl, path
-      uri.host ->
-        Driver.visit(session, path)
-      true ->
-        Driver.visit(session, request_url(path))
-    end
-
-    session
-  end
-
-  @doc """
-  Takes a screenshot of the current window.
-  Screenshots are saved to a "screenshots" directory in the same directory the
-  tests are run in.
-  """
-  @spec take_screenshot(Node.t | t) :: Node.t | t
-
-  def take_screenshot(screenshotable) do
-    image_data =
-      screenshotable
-      |> Driver.take_screenshot
-
-    path = path_for_screenshot
-    File.write! path, image_data
-
-    Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
-  end
 
   @doc """
   Sets the size of the sessions window.
@@ -173,32 +132,14 @@ defmodule Wallaby.Session do
     Driver.send_text(session, text)
     session
   end
-
-  def text(%Wallaby.Session{}=session) do
-    session
-    |> Wallaby.Node.find("body")
-    |> Wallaby.Node.text
-  end
-
-  defp request_url(path) do
-    base_url <> path
-  end
-
-  defp base_url do
-    Application.get_env(:wallaby, :base_url) || ""
-  end
-
-  defp path_for_screenshot do
-    File.mkdir_p!(screenshot_dir)
-    "#{screenshot_dir}/#{:erlang.system_time}.png"
-  end
-
-  defp screenshot_dir do
-    Application.get_env(:wallaby, :screenshot_dir) || "#{File.cwd!()}/screenshots"
-  end
 end
 
 defimpl Wallaby.Drivable, for: Wallaby.Session do
-  def root(session), do: session
-end
+  def page(session), do: session
 
+  def visible_text(session) do
+    session
+    |> Wallaby.Node.Query.find("body", [])
+    |> Wallaby.Drivable.visible_text
+  end
+end

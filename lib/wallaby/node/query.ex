@@ -46,7 +46,7 @@ defmodule Wallaby.Node.Query do
     * `:text` - Text that should be found inside the element.
   """
 
-  alias Wallaby.{Node, Driver, Session}
+  alias Wallaby.{Node, Driver}
   alias Wallaby.XPath
   alias __MODULE__
 
@@ -58,8 +58,6 @@ defmodule Wallaby.Node.Query do
     conditions: [],
     errors: []
   ]
-
-  @default_max_wait_time 3_000
 
   @type t :: %__MODULE__{
     parent: parent,
@@ -373,7 +371,7 @@ defmodule Wallaby.Node.Query do
 
   defp handle_error(query) do
     if Wallaby.screenshot_on_failure? do
-      Session.take_screenshot(query.parent)
+      Wallaby.DSL.Window.take_screenshot(query.parent)
     end
 
     raise Wallaby.QueryError, query
@@ -394,11 +392,7 @@ defmodule Wallaby.Node.Query do
   end
 
   def max_time_exceeded?(start_time) do
-    :erlang.monotonic_time(:milli_seconds) - start_time < max_wait_time
-  end
-
-  defp max_wait_time do
-    Application.get_env(:wallaby, :max_wait_time, @default_max_wait_time)
+    :erlang.monotonic_time(:milli_seconds) - start_time < Wallaby.max_wait_time
   end
 
   defp build_locator({:css, query}), do: {:css, query}
