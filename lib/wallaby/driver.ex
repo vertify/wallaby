@@ -27,7 +27,8 @@ defmodule Wallaby.Driver do
     capabilities = Wallaby.Phantom.capabilities(user_agent: user_agent)
     params = %{desiredCapabilities: capabilities}
 
-    response = request(:post, "#{base_url}session", params)
+    response = request!(:post, base_url <> "session", params)
+
     id = response["sessionId"]
 
     session = %Wallaby.Session{
@@ -49,7 +50,7 @@ defmodule Wallaby.Driver do
   def find_elements(%Query{parent: parent, query: q}=query) do
     check_logs!(parent, fn ->
       nodes =
-        request(:post, parent.url <> "/elements", to_params(q))
+        request!(:post, parent.url <> "/elements", to_params(q))
         |> Map.get("value")
         |> Enum.map(& cast_as_node(parent, &1) )
 
@@ -62,7 +63,7 @@ defmodule Wallaby.Driver do
   """
   def set_value(%Node{url: url}=node, value) do
     check_logs! node, fn ->
-      request(:post, "#{url}/value", %{value: [value]})
+      request!(:post, "#{url}/value", %{value: [value]})
     end
   end
 
@@ -72,7 +73,7 @@ defmodule Wallaby.Driver do
   # @spec clear(Locator.t, query) :: t
   def clear(%Node{url: url}=node) do
     check_logs! node, fn ->
-      request(:post, "#{url}/clear")
+      request!(:post, "#{url}/clear")
     end
   end
 
@@ -81,7 +82,7 @@ defmodule Wallaby.Driver do
   """
   def click(%Node{url: url}=node) do
     check_logs! node, fn ->
-      request(:post, "#{url}/click")
+      request!(:post, "#{url}/click")
     end
   end
 
@@ -90,7 +91,7 @@ defmodule Wallaby.Driver do
   """
   def text(node) do
     check_logs! node, fn ->
-      resp = request(:get, "#{node.url}/text")
+      resp = request!(:get, "#{node.url}/text")
       resp["value"]
     end
   end
@@ -100,7 +101,7 @@ defmodule Wallaby.Driver do
   """
   def page_title(session) do
     check_logs! session, fn ->
-      resp = request(:get, "#{session.url}/title")
+      resp = request!(:get, "#{session.session_url}/title")
       resp["value"]
     end
   end
@@ -110,7 +111,7 @@ defmodule Wallaby.Driver do
   """
   def attribute(node, name) do
     check_logs!(node, fn ->
-      resp = request(:get, "#{node.url}/attribute/#{name}")
+      resp = request!(:get, "#{node.url}/attribute/#{name}")
       resp["value"]
     end)
   end
@@ -120,7 +121,7 @@ defmodule Wallaby.Driver do
   """
   def visit(session, path) do
     check_logs! session, fn ->
-      request(:post, "#{session.url}/url", %{url: path})
+      request!(:post, "#{session.url}/url", %{url: path})
       session
     end
   end
@@ -130,7 +131,7 @@ defmodule Wallaby.Driver do
   """
   def current_url(session) do
     check_logs! session, fn ->
-      resp = request(:get, "#{session.url}/url")
+      resp = request!(:get, "#{session.url}/url")
       resp["value"]
     end
   end
@@ -143,7 +144,7 @@ defmodule Wallaby.Driver do
   """
   def selected(node) do
     check_logs! node, fn ->
-      response = request(:get, "#{node.url}/selected")
+      response = request!(:get, "#{node.url}/selected")
       response["value"]
     end
   end
@@ -156,7 +157,7 @@ defmodule Wallaby.Driver do
   """
   def displayed(node) do
     check_logs!(node, fn ->
-      response = request(:get, "#{node.url}/displayed")
+      response = request!(:get, "#{node.url}/displayed")
       response["value"]
     end)
   end
@@ -168,7 +169,7 @@ defmodule Wallaby.Driver do
   """
   def size(node) do
     check_logs! node, fn ->
-      response = request(:get, "#{node.url}/size")
+      response = request!(:get, "#{node.url}/size")
       response["value"]
     end
   end
@@ -180,7 +181,7 @@ defmodule Wallaby.Driver do
   """
   def rect(node) do
     check_logs! node, fn ->
-      response = request(:get, "#{node.url}/rect")
+      response = request!(:get, "#{node.url}/rect")
       response["value"]
     end
   end
@@ -190,7 +191,7 @@ defmodule Wallaby.Driver do
   """
   def take_screenshot(session) do
     check_logs! session, fn ->
-      request(:get, "#{session.url}/screenshot")
+      request!(:get, "#{session.url}/screenshot")
       |> Map.get("value")
       |> :base64.decode
     end
@@ -201,9 +202,9 @@ defmodule Wallaby.Driver do
   """
   def set_window_size(session, width, height) do
     check_logs! session, fn ->
-      request(
+      request!(
         :post,
-        "#{session.url}/window/#{window_handle(session)}/size",
+        "#{session.session_url}/window/#{window_handle(session)}/size",
         %{width: width, height: height})
       session
     end
@@ -214,7 +215,7 @@ defmodule Wallaby.Driver do
   """
   def get_window_size(session) do
     check_logs! session, fn ->
-      request(:get, "#{session.url}/window/#{window_handle(session)}/size")
+      request!(:get, "#{session.session_url}/window/#{window_handle(session)}/size")
       |> Map.get("value")
     end
   end
@@ -225,7 +226,7 @@ defmodule Wallaby.Driver do
   """
   def execute_script(session, script, arguments \\ []) do
     check_logs! session, fn ->
-      request(:post, "#{session.url}/execute", %{script: script, args: arguments})
+      request!(:post, "#{session.session_url}/execute", %{script: script, args: arguments})
       |> Map.get("value")
     end
   end
@@ -235,7 +236,7 @@ defmodule Wallaby.Driver do
   """
   def send_keys(session, keys) when is_list(keys) do
     check_logs! session, fn ->
-      request(:post, "#{session.url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false)
+      request!(:post, "#{session.url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false)
     end
   end
 
@@ -244,7 +245,7 @@ defmodule Wallaby.Driver do
   """
   def send_text(session, text) do
     check_logs! session, fn ->
-      request(:post, "#{session.url}/keys", %{value: [text]})
+      request!(:post, "#{session.url}/keys", %{value: [text]})
     end
   end
 
@@ -252,13 +253,13 @@ defmodule Wallaby.Driver do
   Retrieves logs from the browser
   """
   def log(session) do
-    resp = request(:post, "#{session.session_url}/log", %{type: "browser"})
+    resp = request!(:post, "#{session.session_url}/log", %{type: "browser"})
     resp["value"]
   end
 
   defp window_handle(session) do
     check_logs! session, fn ->
-      request(:get, "#{session.url}/window_handle")
+      request!(:get, "#{session.session_url}/window_handle")
       |> Map.get("value")
     end
   end
@@ -282,6 +283,13 @@ defmodule Wallaby.Driver do
     return_value
   end
 
+  defp request!(method, url, params \\ %{}, opts \\ []) do
+    case request(method, url, params, opts) do
+      {:ok, response} -> response
+      {:error, error} -> raise "Error: #{error}"
+    end
+  end
+
   defp request(method, url, params \\ %{}, opts \\ [])
   defp request(method, url, params, _opts) when map_size(params) == 0 do
     make_request(method, url, "")
@@ -296,10 +304,18 @@ defmodule Wallaby.Driver do
   defp make_request(method, url, body) do
     headers = [{"Content-Type", "text/json"}]
     case HTTPoison.request(method, url, body, headers, [timeout: :infinity, recv_timeout: :infinity]) do
-      {:ok, response} ->
-        Poison.decode!(response.body)
       {:error, e} ->
         raise "There was an error calling: #{url} -> #{e.reason}"
+      {:ok, %{body: "Invalid Command Method" <> _}} ->
+        raise "Invalid Webdriver Request"
+      {:ok, %{body: body}} ->
+        case Poison.decode!(body) do
+          %{"value" => %{"message" => error}} ->
+            error = Poison.decode!(error)
+            {:error, error["errorMessage"]}
+          parsed_body ->
+            {:ok, parsed_body}
+        end
     end
   end
 

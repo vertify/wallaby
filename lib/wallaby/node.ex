@@ -60,6 +60,13 @@ defmodule Wallaby.Node do
     node
   end
 
+  def set(%Node{}=node, value) when is_binary(value) do
+    node
+    |> Driver.set_value(value)
+
+    node
+  end
+
   @doc """
   Clears an input field. Input nodes are looked up by id, label text, or name.
   The node can also be passed in directly.
@@ -119,7 +126,7 @@ defmodule Wallaby.Node do
   """
   @spec text(t) :: String.t
 
-  def text(node) do
+  def text(%Node{}=node) do
     Driver.text(node)
   end
 
@@ -246,3 +253,8 @@ defmodule Wallaby.Node do
     Application.get_env(:wallaby, :max_wait_time, @default_max_wait_time)
   end
 end
+
+defimpl Wallaby.Drivable, for: Wallaby.Node do
+  def root(node), do: Wallaby.Drivable.root(node.parent)
+end
+

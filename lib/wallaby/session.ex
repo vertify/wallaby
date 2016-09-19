@@ -127,7 +127,7 @@ defmodule Wallaby.Session do
   end
 
   @doc """
-  Gets the title for the current page
+  Gets the title for the current page
   """
   @spec page_title(t) :: String.t
 
@@ -174,6 +174,12 @@ defmodule Wallaby.Session do
     session
   end
 
+  def text(%Wallaby.Session{}=session) do
+    session
+    |> Wallaby.Node.find("body")
+    |> Wallaby.Node.text
+  end
+
   defp request_url(path) do
     base_url <> path
   end
@@ -191,3 +197,8 @@ defmodule Wallaby.Session do
     Application.get_env(:wallaby, :screenshot_dir) || "#{File.cwd!()}/screenshots"
   end
 end
+
+defimpl Wallaby.Drivable, for: Wallaby.Session do
+  def root(session), do: session
+end
+

@@ -46,6 +46,7 @@ defmodule Wallaby.DSL.Actions do
   """
 
   alias Wallaby.Node
+  alias Wallaby.Drivable
 
   @type parent :: Wallaby.Node.Query.parent
   @type locator :: Wallaby.Node.Query.locator
@@ -108,7 +109,7 @@ defmodule Wallaby.DSL.Actions do
   end
 
   @doc """
-  Selects an option from a select box. The select box can be found by id, label
+  Selects an option from a select box. The select box can be found by id, label
   text, or name. The option can be found by its text.
   """
   @spec select(parent, locator, option: String.t) :: parent
@@ -133,6 +134,7 @@ defmodule Wallaby.DSL.Actions do
     |> Node.click
 
     parent
+    |> Drivable.root
   end
 
   @doc """
@@ -149,7 +151,7 @@ defmodule Wallaby.DSL.Actions do
   end
 
   @doc """
-  Clicks on the matching button. Alias for `click_button`.
+  Clicks on the matching button. Alias for `click_button`.
   """
   @spec click_on(parent, locator, opts) :: parent
 
@@ -179,7 +181,7 @@ defmodule Wallaby.DSL.Actions do
 
     parent
     |> Node.Query.file_field(locator, opts)
-    |> Node.fill_in(with: path)
+    |> Node.set(path)
 
     parent
   end
