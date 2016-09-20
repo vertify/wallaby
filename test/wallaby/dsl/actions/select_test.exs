@@ -1,6 +1,8 @@
 defmodule Wallaby.Actions.SelectTest do
   use Wallaby.SessionCase, async: true
 
+  alias Wallaby.Node
+
   setup %{session: session, server: server} do
     page =
       session
@@ -10,39 +12,39 @@ defmodule Wallaby.Actions.SelectTest do
   end
 
   test "choosing an option from a select box by id", %{page: page} do
-    refute find(page, "#select-option-2") |> selected?
+    refute find(page, "#select-option-2") |> Node.selected?
 
     page
     |> select("select-box", option: "Option 2")
 
-    assert find(page, "#select-option-2") |> selected?
+    assert find(page, "#select-option-2") |> Node.selected?
   end
 
   test "choosing an option from a select box by name", %{page: page} do
-    refute find(page, "#select-option-5") |> selected?
+    refute find(page, "#select-option-5") |> Node.selected?
 
     page
     |> select("my-select", option: "Option 2")
 
-    assert find(page, "#select-option-5") |> selected?
+    assert find(page, "#select-option-5") |> Node.selected?
   end
 
   test "choosing an option from a select box by label", %{page: page} do
-    refute find(page, "#select-option-5") |> selected?
+    refute find(page, "#select-option-5") |> Node.selected?
 
     page
     |> select("My Select", option: "Option 2")
 
-    assert find(page, "#select-option-5") |> selected?
+    assert find(page, "#select-option-5") |> Node.selected?
   end
 
   test "choosing an option from a select box by label when for is id", %{page: page} do
-    refute find(page, "#select-option-2") |> selected?
+    refute find(page, "#select-option-2") |> Node.selected?
 
     page
     |> select("Select With ID", option: "Option 2")
 
-    assert find(page, "#select-option-2") |> selected?
+    assert find(page, "#select-option-2") |> Node.selected?
   end
 
   test "throw an error if a label exists but does not have a for attribute", %{page: page} do

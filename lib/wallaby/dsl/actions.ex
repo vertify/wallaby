@@ -66,22 +66,9 @@ defmodule Wallaby.DSL.Actions do
 
     parent
   end
+
   def fill_in(parent, locator, [{:with, value} | _]=opts) when is_number(value) do
     fill_in(parent, locator,  Keyword.merge(opts, [with: to_string(value)]))
-  end
-
-  def fill_in(parent, with: value) when is_binary(value) do
-    parent
-    |> Node.fill_in(with: value)
-
-    parent
-  end
-
-  def fill_in(parent, with: value) when is_number(value) do
-    parent
-    |> Node.fill_in(with: to_string(value))
-
-    parent
   end
 
   @doc """
@@ -110,13 +97,6 @@ defmodule Wallaby.DSL.Actions do
     parent
   end
 
-  def check(parent) do
-    parent
-    |> Node.check
-
-    parent
-  end
-
   @doc """
   Unchecks a checkbox based on id, label text, or name.
   """
@@ -126,12 +106,6 @@ defmodule Wallaby.DSL.Actions do
     parent
     |> Node.Query.checkbox(locator, opts)
     |> Node.uncheck
-
-    parent
-  end
-
-  def uncheck(parent) do
-    Node.uncheck(parent)
 
     parent
   end
@@ -176,6 +150,7 @@ defmodule Wallaby.DSL.Actions do
     |> Node.click
 
     parent
+    |> Drivable.page
   end
 
   @doc """
@@ -195,13 +170,6 @@ defmodule Wallaby.DSL.Actions do
   def clear(parent, locator, opts\\[]) do
     parent
     |> Node.Query.fillable_field(locator, opts)
-    |> Node.clear()
-
-    parent
-  end
-
-  def clear(parent) do
-    parent
     |> Node.clear()
 
     parent

@@ -1,7 +1,7 @@
 defmodule Wallaby.DSL.Navigation do
   @type t :: Wallaby.Session.t | Wallaby.Node.t
 
-  alias Wallaby.{Session, Driver}
+  alias Wallaby.{Session, Driver, Drivable}
 
   @doc """
   Changes the current page to the provided route.
@@ -30,16 +30,19 @@ defmodule Wallaby.DSL.Navigation do
   """
   def page_title(parent) do
     parent
+    |> Drivable.page
     |> Session.page_title
   end
 
   def current_url(parent) do
     parent
+    |> Drivable.page
     |> Session.get_current_url
   end
 
   def current_path(parent) do
     parent
+    |> Drivable.page
     |> Session.get_current_path
   end
 

@@ -9,7 +9,8 @@ defmodule Wallaby.DSL.Matchers do
   # @spec has_css?(locator, String.t) :: boolean()
 
   def has_css?(locator, css) when is_binary(css) do
-    Query.find(locator, css, [count: :any])
+    locator
+    |> Query.find(css, [count: :any])
     |> Enum.any?
   end
 
@@ -19,7 +20,8 @@ defmodule Wallaby.DSL.Matchers do
   # @spec has_no_css?(locator, String.t) :: boolean()
 
   def has_no_css?(locator, css) when is_binary(css) do
-    Query.find(locator, css, count: 0)
+    locator
+    |> Query.find(css, count: 0)
     |> Enum.empty?
   end
 
@@ -58,6 +60,14 @@ defmodule Wallaby.DSL.Matchers do
     rescue
       _e in Wallaby.ExpectationNotMet -> false
     end
+  end
+
+  # TODO: Combine these two queries into one
+  def has_checked_field?(parent, locator) do
+    parent
+    |> Query.field(locator, count: :any)
+    |> Enum.map(fn(node) -> Node.checked?(node) end)
+    |> Enum.any?
   end
 
   defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do

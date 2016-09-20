@@ -140,6 +140,19 @@ defmodule Wallaby.Node.Query do
   end
 
   @doc """
+  Locates any field by its id, name, placeholder, or label text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec field(parent, locator, opts) :: result
+
+  def field(parent, locator, opts) do
+    find_field(parent, {:field, locator}, opts)
+  end
+
+  @doc """
   Locates a text field or textarea by its id, name, placeholder, or label text.
 
   ## Options
@@ -405,6 +418,7 @@ defmodule Wallaby.Node.Query do
   defp build_locator({:option, query}), do: {:xpath, XPath.option(query)}
   defp build_locator({:select, query}), do: {:xpath, XPath.select(query)}
   defp build_locator({:file_field, query}), do: {:xpath, XPath.file_field(query)}
+  defp build_locator({:field, query}), do: {:xpath, XPath.field(query)}
 
   defp build_conditions(conditions) do
     default_conditions

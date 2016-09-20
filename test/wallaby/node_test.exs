@@ -2,6 +2,8 @@ defmodule Wallaby.NodeTest do
   use Wallaby.SessionCase, async: true
   use Wallaby.DSL
 
+  alias Wallaby.Node
+
   test "can find an element on a page", %{server: server, session: session} do
     element =
       session
@@ -82,7 +84,7 @@ defmodule Wallaby.NodeTest do
       session
       |> visit(server.base_url)
       |> find("body")
-      |> attr("class")
+      |> Node.attr("class")
 
     assert class == "bootstrap"
   end
@@ -93,10 +95,10 @@ defmodule Wallaby.NodeTest do
       |> visit(server.base_url <> "forms.html")
       |> find("#name_field")
 
-    fill_in(node, with: "Chris")
+    Node.fill_in(node, with: "Chris")
     assert has_value?(node, "Chris")
 
-    clear(node)
+    Node.clear(node)
     refute has_value?(node, "Chris")
     assert has_value?(node, "")
   end
@@ -214,26 +216,26 @@ defmodule Wallaby.NodeTest do
     test "determines if the node is visible to the user", %{page: page} do
       page
       |> find("#visible")
-      |> visible?
+      |> Node.visible?
       |> assert
 
       page
       |> find("#invisible", visible: false)
-      |> visible?
+      |> Node.visible?
       |> refute
     end
 
     test "handles elements that are not on the page", %{page: page} do
       node = find(page, "#off-the-page", visible: false)
 
-      assert visible?(node) == false
+      assert Node.visible?(node) == false
     end
 
     @tag skip: "Unsuported in phantom"
     test "handles obscured elements", %{page: page} do
       node = find(page, "#obscured", visible: false)
 
-      assert visible?(node) == false
+      assert Node.visible?(node) == false
     end
   end
 

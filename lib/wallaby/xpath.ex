@@ -5,6 +5,10 @@ defmodule Wallaby.XPath do
   @type id    :: query
   @type label :: query
 
+  def field(query) do
+    ~s{.//*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]}
+  end
+
   @doc """
   XPath for links
   this xpath is gracious ripped from capybara via

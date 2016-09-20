@@ -10,26 +10,27 @@ defmodule Wallaby.Actions.ChooseTest do
   end
 
   test "choosing a radio button", %{page: page} do
-    refute find(page, "#option2") |> checked?
+    refute page |> has_checked_field?("option2")
 
     page
     |> choose("option2")
 
-    assert find(page, "#option2") |> checked?
+    assert page |> has_checked_field?("option2")
   end
 
   test "choosing a radio button unchecks other buttons in the group", %{page: page} do
     page
     |> choose("Option 1")
-    |> find("#option1")
-    |> checked?
+
+    page
+    |> has_checked_field?("option1")
     |> assert
 
     page
     |> choose("option2")
 
-    refute find(page, "#option1") |> checked?
-    assert find(page, "#option2") |> checked?
+    refute has_checked_field?(page, "option1")
+    assert has_checked_field?(page, "option2")
   end
 
   test "choosing a radio button returns the parent", %{page: page} do
@@ -37,7 +38,7 @@ defmodule Wallaby.Actions.ChooseTest do
     |> choose("Option 1")
     |> choose("option2")
 
-    assert find(page, "#option2") |> checked?
+    assert has_checked_field?(page, "option2")
   end
 
   test "throw an error if a label exists but does not have a for attribute", %{page: page} do
