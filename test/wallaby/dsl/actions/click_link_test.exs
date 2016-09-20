@@ -1,7 +1,7 @@
 defmodule Wallaby.DSL.Actions.ClickLinkTest do
   use Wallaby.SessionCase, async: true
 
-  test "clicking links takes you to a new page", %{session: session, server: server} do
+  test "clicking links takes you to a new page and returns the session", %{session: session, server: server} do
     page =
       session
       |> visit(server.base_url)

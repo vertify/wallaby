@@ -1,4 +1,4 @@
-defmodule Wallaby.Session.ScreenshotTest do
+defmodule Wallaby.DSL.Window.ScreenshotTest do
   use Wallaby.SessionCase, async: false
 
   setup %{server: server, session: session} do
