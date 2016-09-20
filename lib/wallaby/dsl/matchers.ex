@@ -62,7 +62,6 @@ defmodule Wallaby.DSL.Matchers do
     end
   end
 
-  # TODO: Combine these two queries into one
   def has_checked_field?(parent, locator) do
     parent
     |> Query.field(locator, count: :any)
