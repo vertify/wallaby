@@ -33,7 +33,7 @@ defmodule Wallaby.Server do
 
   def phantomjs_command(port, local_storage) do
     win32_pfx = case :os.type() do
-      {:win32, _} -> "powershell -NoExit -Noninteractive -Command "
+      {:win32, _} -> "powershell -NoExit -Command "
       _ -> ""
     end
 
