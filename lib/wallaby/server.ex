@@ -25,13 +25,19 @@ defmodule Wallaby.Server do
     port = find_available_port
     local_storage = tmp_local_storage
 
-    Port.open({:spawn, phantomjs_command(port, local_storage)}, [:binary, :stream, :use_stdio, :exit_status])
+    opts = [:binary, :stream, :use_stdio, :exit_status]
+    Port.open({:spawn, phantomjs_command(port, local_storage)}, opts)
 
     {:ok, %{running: false, awaiting_url: [], base_url: "http://localhost:#{port}/", local_storage: local_storage}}
   end
 
   def phantomjs_command(port, local_storage) do
-    "#{script_path} #{phantomjs_path} --webdriver=#{port} --local-storage-path=#{local_storage} #{args}"
+    win32_pfx = case :os.type() do
+      {:win32, _} -> "powershell -NoExit -Noninteractive -Command "
+      _ -> ""
+    end
+
+    "#{win32_pfx}#{script_path} #{phantomjs_path} --webdriver=#{port} --local-storage-path=#{local_storage} #{args}"
   end
 
   defp find_available_port do
@@ -52,11 +58,11 @@ defmodule Wallaby.Server do
   end
 
   defp script_path do
-    ext = case :os.type() do
-      {:win32, _} -> "ps1"
-      _ -> "sh"
+    path = case :os.type() do
+      {:win32, _} -> "priv/run_phantom.ps1"
+      _ -> "priv/run_phantom.sh"
     end
-    Path.absname("priv/run_phantom.#{ext}", Application.app_dir(:wallaby))
+    Path.absname(path, Application.app_dir(:wallaby))
   end
 
   defp phantomjs_path do
