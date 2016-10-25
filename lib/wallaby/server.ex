@@ -33,7 +33,7 @@ defmodule Wallaby.Server do
 
   def phantomjs_command(port, local_storage) do
     win32_pfx = case :os.type() do
-      {:win32, _} -> "powershell -NoProfile -ExecutionPolicy unrestricted -Command "
+      {:win32, _} -> "powershell -NoProfile -ExecutionPolicy unrestricted -NoExit -Noninteractive -Command "
       _ -> ""
     end
 
