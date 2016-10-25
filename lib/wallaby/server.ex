@@ -52,7 +52,12 @@ defmodule Wallaby.Server do
   end
 
   defp script_path do
-    Path.absname("priv/run_phantom.sh", Application.app_dir(:wallaby))
+    ext = if :os.type() == :win32 do
+      ".ps1"
+    else
+      ".sh"
+    end
+    Path.absname("priv/run_phantom.#{ext}", Application.app_dir(:wallaby))
   end
 
   defp phantomjs_path do
